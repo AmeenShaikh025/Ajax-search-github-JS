@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Display user
+	</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+	<style>
+		.list-group-item:active {
+			background: #efeaea;
+		}
+		#cardDetails {
+			display: none;
+		}
+	</style>
+
+</head>
+<body>
+
+	
+
+
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-6">
+				<input id="inputSearch" type="text" class="form-control" onkeyup="displaySearch();" placeholder="Search user" name="">
+				<ul class="list-group py-3" id="allUsers">
+
+				</ul>	
+			</div>
+			<div class="col-md-6">
+
+				<div class="card" id="cardDetails" style="width:400px">
+				    
+				    <!-- <div class="card-body">
+				      <h4 class="card-title">John Doe</h4>
+				      <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+				      <a href="#" class="btn btn-primary">See Profile</a>
+				    </div> -->
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+	<!-- Popper JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+
+
+	<script>
+		$(document).ready(function() {
+			let listItem;
+			let avatars;
+
+			$.ajax({
+				type: 'GET',
+				cache: false,
+				'dataType': "json",
+				url: "https://api.github.com/users",
+				success: function(data){
+						console.log(data);
+						/*console.log(data.length);*/
+						/*avatars = data[0].avatar_url;
+						console.log(avatars);*/
+
+					for(i=0; i <= data.length;i++) {
+						listItem = 
+						`
+							<li class="list-group-item" onclick="showDetails('${data[i].avatar_url}','${data[i].type}');" style="cursor: pointer;">
+								${data[i].login}
+							</li>
+						`;
+
+						$('#allUsers').append(listItem);
+					}
+				}
+			});
+
+
+		});
+
+			function showDetails(avatar,type) {
+				// alert('hi');
+				// console.log(avatar);
+
+				$('#cardDetails img').remove();
+				$('#cardDetails p').remove();
+				$('#cardDetails').css('display','block');
+
+				if(avatar != '') {
+					let imgUser = 
+					`
+						<img class="card-img-top" src="${avatar}" alt="Card image" style="width:100%">
+						<p class="text-center font-weight-bold"> ${type}</p>
+					`;
+
+					$('#cardDetails').append(imgUser);
+				}
+				else {
+					alert('error');
+				}
+				
+			}
+
+			function displaySearch() {
+				let serchValue, nameList, txtValue, li;
+				serchValue = $('#inputSearch').val().toUpperCase();
+				li = $('li');
+
+				for(i=0; i <= 30; i++) {
+					txtValue = li[i].textContent || li[i].innerText;	
+					if (txtValue.toUpperCase().indexOf(serchValue) > -1) { //MAIN logic
+						//SHOW MATCHING VALUES
+			            li[i].style.display = "";
+			            /*alert('No');*/
+			        } else {
+			        	//HIDE MATCHING VALUES
+			            li[i].style.display = "none";
+			            /*alert('YEs');*/
+			        }
+				}
+			}
+	</script>
+
+
+</body>
+</html>
